@@ -1,0 +1,11 @@
+(library
+ (name bridge_lib)
+ (libraries
+   menhirLib)
+   )
+
+(ocamllex lexer)
+
+(menhir
+ (flags --external-tokens Ast --explain --table)
+ (modules parser))

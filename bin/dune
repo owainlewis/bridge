@@ -1,0 +1,3 @@
+(executables
+  (names bridge)
+  (libraries bridge_lib))
