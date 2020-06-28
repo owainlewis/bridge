@@ -8,4 +8,3 @@ let parse_program_string: string -> Ast.t = fun s ->
   | Lexer.Error (msg, pos) ->
     let _ = Printf.eprintf "Unexpected token: %s on line: %d" msg pos.pos_lnum in
     [];;
-

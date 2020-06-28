@@ -9,6 +9,7 @@
 %token SEMICOLON
 %token LPAREN RPAREN
 %token LBRACKET RBRACKET
+%token EQUAL
 %token LET
 %token EOF
 
@@ -28,10 +29,12 @@ statements:
 
 statement:
 | expr               { St_expr $1 }
+| LET k = IDENT EQUAL vs = exprs SEMICOLON { St_assign $1 $3 }
 ;
 
-eos:
-| SEMICOLON { () }
+exprs:
+| { [] }
+| exprs expr { $2 :: $1 }
 ;
 
 expr:
@@ -43,4 +46,6 @@ expr:
     { Expr_id id }
 | s = STRING
     { Expr_string s }
+| LBRACKET es = exprs RBRACKET
+    { Expr_list (List.rev es) }
 ;

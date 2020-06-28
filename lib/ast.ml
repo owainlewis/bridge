@@ -11,6 +11,7 @@ type token =
   | RPAREN
   | LBRACKET
   | RBRACKET
+  | EQUAL
   | EOF
 
 type t = statement list
@@ -24,12 +25,14 @@ and expr =
   | Expr_float of float
   | Expr_string of string
   | Expr_id of string
+  | Expr_list of expr list
 
 let expr_to_string = function
-  | Expr_id id -> id
-  | Expr_string s -> sprintf "'%s'" s
   | Expr_int i -> string_of_int i
   | Expr_float f -> string_of_float f
+  | Expr_string s -> sprintf "'%s'" s
+  | Expr_id id -> id
+  | Expr_list _ -> "[]"
 
 let statement_to_string = function
   | St_expr e -> (expr_to_string e)

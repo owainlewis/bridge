@@ -20,6 +20,7 @@ rule token = parse
 | ")"      { RPAREN }
 | "["      { LBRACKET }
 | "]"      { RBRACKET }
+| "="      { EQUAL    }
 | "let"    { LET }
 
 | ['0'-'9']+ as i
