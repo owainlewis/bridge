@@ -9,6 +9,7 @@
 %token SEMICOLON
 %token LPAREN RPAREN
 %token LBRACKET RBRACKET
+%token LET
 %token EOF
 
 %start prog
@@ -21,13 +22,12 @@ prog:
 ;
 
 statements:
-|
-    { [] }
+| { [] }
 | statements statement { $2 :: $1 }
 ;
 
 statement:
-| expr eos               { St_expr $1 }
+| expr               { St_expr $1 }
 ;
 
 eos:

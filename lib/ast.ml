@@ -5,6 +5,7 @@ type token =
   | FLOAT of float
   | STRING of string
   | IDENT of string
+  | LET
   | SEMICOLON
   | LPAREN
   | RPAREN
@@ -16,7 +17,7 @@ type t = statement list
 
 and statement =
   | St_expr of expr
-  | St_assign of string * expr
+  | St_assign of string * expr list
 
 and expr =
   | Expr_int of int
@@ -32,7 +33,7 @@ let expr_to_string = function
 
 let statement_to_string = function
   | St_expr e -> (expr_to_string e)
-  | St_assign (k, v) -> k ^ " = " ^ (expr_to_string v)
+  | St_assign (k, vs) -> k ^ " = " ^ (String.concat " " (List.map expr_to_string vs))
 
 let to_string prog =
   String.concat "\n" (List.map statement_to_string prog)

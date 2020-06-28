@@ -1,16 +1,26 @@
 {
   open Ast
 
-  exception Error of string
+  exception Error of string * Lexing.position
+
+  let lexing_error lexbuf =
+    let invalid_input = String.make 1 (Lexing.lexeme_char lexbuf 0) in
+    raise (Error (invalid_input, lexbuf.Lexing.lex_curr_p))
 }
 
+let white   = [' ' '\t' '\n' '\r']+
+let newline = '\n' | '\r' | "\r\n"
+
 rule token = parse
-| [' ' '\t' '\n']+ { token lexbuf }
-| ';' { SEMICOLON }
-| '(' { LPAREN }
-| ')' { RPAREN }
-| '[' { LBRACKET }
-| ']' { RBRACKET }
+(* skip whitespace *)
+| white    { token lexbuf }
+| newline  { token lexbuf }
+| ";"      { SEMICOLON }
+| "("      { LPAREN }
+| ")"      { RPAREN }
+| "["      { LBRACKET }
+| "]"      { RBRACKET }
+| "let"    { LET }
 
 | ['0'-'9']+ as i
     { INT (int_of_string i) }
@@ -27,5 +37,4 @@ rule token = parse
 | eof
     { EOF }
 
-| _
-    { raise (Error (Printf.sprintf "At offset %d: unexpected character.\n" (Lexing.lexeme_start lexbuf))) }
+| _ { lexing_error lexbuf }
