@@ -1,5 +1,7 @@
 {
   open Ast
+
+  exception Error of string
 }
 
 rule token = parse
@@ -26,4 +28,4 @@ rule token = parse
     { EOF }
 
 | _
-    { failwith (Printf.sprintf "At offset %d: unexpected character.\n" (Lexing.lexeme_start lexbuf)) }
+    { raise (Error (Printf.sprintf "At offset %d: unexpected character.\n" (Lexing.lexeme_start lexbuf))) }

@@ -33,3 +33,6 @@ let expr_to_string = function
 let statement_to_string = function
   | St_expr e -> (expr_to_string e)
   | St_assign (k, v) -> k ^ " = " ^ (expr_to_string v)
+
+let to_string prog =
+  String.concat "\n" (List.map statement_to_string prog)

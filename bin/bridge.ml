@@ -3,7 +3,13 @@ open Bridge_lib
 let parse_string s = Parser.prog Lexer.token (Lexing.from_string s)
 
 let _ =
-  let result = parse_string "1" in
-  match result with
-  | [] -> print_endline "[]"
-  | x::_-> print_endline (Ast.statement_to_string x)
+  try
+    let prog = parse_string "1 ;" in
+    print_endline(Ast.to_string prog);
+  with
+  | Lexer.Error msg ->
+    Printf.eprintf "%s%!" msg
+  (* TODO get the error here *)
+  | Parser.Error ->
+    Printf.eprintf "syntax error.\n%!"
+    ;
