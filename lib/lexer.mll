@@ -15,13 +15,12 @@ rule token = parse
 (* skip whitespace *)
 | white    { token lexbuf }
 | newline  { token lexbuf }
-| ";"      { SEMICOLON }
-| "("      { LPAREN }
-| ")"      { RPAREN }
-| "["      { LBRACKET }
-| "]"      { RBRACKET }
-| "="      { EQUAL    }
-| "let"    { LET }
+| ";"      { SEMICOLON    }
+| "["      { LBRACKET     }
+| "]"      { RBRACKET     }
+| "="      { EQUAL        }
+| "let"    { LET          }
+| "module" { MODULE       }
 
 | ['0'-'9']+ as i
     { INT (int_of_string i) }

@@ -7,7 +7,6 @@
 %token <string> STRING
 %token <string> IDENT
 %token SEMICOLON
-%token LPAREN RPAREN
 %token LBRACKET RBRACKET
 %token EQUAL
 %token LET
@@ -28,8 +27,9 @@ statements:
 ;
 
 statement:
-| expr               { St_expr $1 }
-| LET k = IDENT EQUAL vs = exprs SEMICOLON { St_assign $1 $3 }
+| expr                                     { St_expr $1 }
+| LET k = IDENT EQUAL vs = exprs SEMICOLON { St_assign(k, vs) }
+| MODULE k = IDENT SEMICOLON               { St_module(k) }
 ;
 
 exprs:
