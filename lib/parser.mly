@@ -9,6 +9,7 @@
 %token SEMICOLON
 %token LBRACKET RBRACKET
 %token EQUAL
+%token MODULE
 %token LET
 %token EOF
 

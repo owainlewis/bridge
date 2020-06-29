@@ -27,12 +27,15 @@ and expr =
   | Expr_id of string
   | Expr_list of expr list
 
-let expr_to_string = function
+let rec expr_to_string = function
   | Expr_int i -> string_of_int i
   | Expr_float f -> string_of_float f
   | Expr_string s -> sprintf "'%s'" s
   | Expr_id id -> id
-  | Expr_list _ -> "[]"
+  | Expr_list vs ->
+    let inner_forms =
+      String.concat " " (List.map expr_to_string vs) in
+    "[" ^ inner_forms ^ "]"
 
 let statement_to_string = function
   | St_expr e -> (expr_to_string e)

@@ -1,7 +1,7 @@
 build:
 	@dune build
 
-run:
+run: build
 	@./_build/default/bin/bridge.exe
 
 repl: build
