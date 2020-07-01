@@ -13,14 +13,14 @@ let newline = '\n' | '\r' | "\r\n"
 
 rule token = parse
 (* skip whitespace *)
-| white    { token lexbuf }
-| newline  { token lexbuf }
-| ";"      { SEMICOLON    }
-| "["      { LBRACKET     }
-| "]"      { RBRACKET     }
-| "="      { EQUAL        }
-| "let"    { LET          }
-| "module" { MODULE       }
+| white    { token lexbuf      }
+| newline  { token lexbuf      }
+| ";"      { SEMICOLON         }
+| "["      { LEFT_BRACKET      }
+| "]"      { RIGHT_BRACKET     }
+| "="      { EQUALS            }
+| "let"    { LET               }
+| "module" { MODULE            }
 
 | ['0'-'9']+ as i
     { INT (int_of_string i) }
@@ -28,7 +28,8 @@ rule token = parse
 | ['0'-'9']+ '.' ['0'-'9']* as f
     { FLOAT (float_of_string f) }
 
-| ['A'-'Z''a'-'z''0'-'9''_']['A'-'Z''a'-'z''0'-'9''-''_']* as id { IDENT(id) }
+| ['A'-'Z''a'-'z''0'-'9''_']['A'-'Z''a'-'z''0'-'9''-''_']* as id
+    { IDENTIFIER(id) }
 
 | '"' [^ '"']* "\""
     { let s = Lexing.lexeme lexbuf in

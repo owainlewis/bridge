@@ -5,10 +5,10 @@
 %token <int> INT
 %token <float> FLOAT
 %token <string> STRING
-%token <string> IDENT
+%token <string> IDENTIFIER
 %token SEMICOLON
-%token LBRACKET RBRACKET
-%token EQUAL
+%token LEFT_BRACKET RIGHT_BRACKET
+%token EQUALS
 %token MODULE
 %token LET
 %token EOF
@@ -28,9 +28,12 @@ statements:
 ;
 
 statement:
-| expr                                     { St_expr $1 }
-| LET k = IDENT EQUAL vs = exprs SEMICOLON { St_assign(k, vs) }
-| MODULE k = IDENT SEMICOLON               { St_module(k) }
+| expr
+  { St_expr $1 }
+| LET k = IDENTIFIER EQUALS vs = exprs SEMICOLON
+  { St_assign(k, vs) }
+| MODULE k = IDENTIFIER SEMICOLON
+  { St_module(k) }
 ;
 
 exprs:
@@ -43,10 +46,10 @@ expr:
     { Expr_int i }
 | f = FLOAT
     { Expr_float f }
-| id = IDENT
+| id = IDENTIFIER
     { Expr_id id }
 | s = STRING
     { Expr_string s }
-| LBRACKET es = exprs RBRACKET
+| LEFT_BRACKET es = exprs RIGHT_BRACKET
     { Expr_list (List.rev es) }
 ;

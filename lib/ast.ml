@@ -1,16 +1,20 @@
 open Printf
 
 type token =
+  (* One and two character tokens *)
+  | SEMICOLON
+  | LEFT_BRACKET
+  | RIGHT_BRACKET
+  | EQUALS
+  (* Literals *)
   | INT of int
   | FLOAT of float
   | STRING of string
-  | IDENT of string
+  | IDENTIFIER of string
+  (* Keywords *)
   | LET
   | MODULE
-  | SEMICOLON
-  | LBRACKET
-  | RBRACKET
-  | EQUAL
+  (* Misc *)
   | EOF
 
 type t = statement list
