@@ -1,5 +1,8 @@
 type state = { stack: Ast.expr Datastack.t }
 
+module StringMap = Map.Make(struct type t = int let compare = Stdlib.compare end);;
+let dictionary = StringMap.empty;;
+
 let dot state = print_endline "OK"; state
 
 let dictionary = [("dot", dot)]
@@ -8,13 +11,13 @@ let mk_state () = {
   stack = Datastack.create()
 }
 
-let push expr s =
-  Datastack.push expr s.stack;
-  s
+let interpret_one state = function
+  | Ast.St_expr e ->
+    Datastack.push e state.stack;
+    state
+  | _ -> state
 
-let rec interpreter state statements =
+let rec interpret state statements =
   match statements with
-  | x::xs -> match x with
-      Ast.St_expr expr -> state
-      _ -> state
+  | x::xs -> let new_state = interpret_one state x in interpret new_state xs
   | [] -> state

@@ -14,6 +14,7 @@
 %token EOF
 
 %start prog
+
 %type <Ast.t> prog
 
 %%

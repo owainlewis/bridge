@@ -12,3 +12,8 @@ let parse_program_string: string -> Ast.t = fun s ->
   | Lexer.Error (msg, pos) ->
     let _ = Printf.eprintf "Unexpected token: %s on line: %d" msg pos.pos_lnum in
     [];;
+
+let run program = 
+  let ast = parse_string program
+  and initial_state = Interpreter.mk_state() in 
+  Interpreter.interpret initial_state ast
