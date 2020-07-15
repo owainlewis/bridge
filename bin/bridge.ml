@@ -2,12 +2,14 @@ open Bridge_lib
 
 let repl = fun _ ->
   print_endline "Bridge Interpreter. 2020 Owain Lewis";
+  let state = Interpreter.mk_state() in
   while true do
     print_string "> ";
     let input = read_line () in
-    if input = ":exit" then exit 0 else
+    if input = ":exit" then exit 0
+    else
       let program = Core.parse_string(input) in
-      print_endline (Ast.to_string program);
+      let _ = Interpreter.interpret state program in ()
   done
 
 let run_file f =
