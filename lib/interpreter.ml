@@ -1,3 +1,5 @@
+exception Unbound of string
+
 type state = {
   stack: Ast.expr Datastack.t;
   dictionary: (string, (state -> state)) Hashtbl.t
@@ -24,7 +26,7 @@ let interpret_one state = function
      | Some(fn) ->
        print_endline "Found f";
        fn state (* Apply function to state *)
-     | None -> print_endline "Not found"; state)
+     | None -> raise (Unbound ("Word `" ^ id ^ "` is not defined")))
   | Ast.St_expr e -> Datastack.push e state.stack; state
   | Ast.St_assign (_, _) -> print_endline "Assign statement"; state
   | Ast.St_module (_) -> print_endline "Module statement"; state

@@ -1,5 +1,7 @@
 open Bridge_lib
 
+let report_error msg = print_endline ("Error: " ^ msg)
+
 let repl = fun _ ->
   print_endline "Bridge Interpreter. 2020 Owain Lewis";
   let state = Interpreter.mk_state() in
@@ -9,7 +11,10 @@ let repl = fun _ ->
     if input = ":exit" then exit 0
     else
       let program = Core.parse_string(input) in
-      let _ = Interpreter.interpret state program in ()
+      try
+        let _ = Interpreter.interpret state program in ()
+      with (Interpreter.Unbound msg) ->
+        report_error msg
   done
 
 let run_file f =
