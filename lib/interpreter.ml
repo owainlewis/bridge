@@ -1,20 +1,33 @@
-type state = { stack: Ast.expr Datastack.t }
+type state = {
+  stack: Ast.expr Datastack.t;
+  dictionary: (string, (state -> state)) Hashtbl.t
+}
 
 let dot state =
   let parts = String.concat ", " (Datastack.map Ast.expr_to_string state.stack) in
   print_endline("[" ^ parts ^ "]");
   state
 
-let dictionary = [("dot", dot)]
-
-let mk_state () = {
-  stack = Datastack.create()
-}
+let mk_state () =
+  (* Setup the hash table. Not maintainable so refactor *)
+  let dict = Hashtbl.create 100
+  and names = [("dot", dot)] in
+  List.iter (fun (k,v) -> Hashtbl.add dict k v) names;
+  {
+    stack = Datastack.create();
+    dictionary = dict
+  }
 
 let interpret_one state = function
-  | Ast.St_expr (Ast.Expr_id id) -> print_endline id; state
+  | Ast.St_expr (Ast.Expr_id id) ->
+    (match (Hashtbl.find_opt state.dictionary id) with
+     | Some(fn) ->
+       print_endline "Found f";
+       fn state (* Apply function to state *)
+     | None -> print_endline "Not found"; state)
   | Ast.St_expr e -> Datastack.push e state.stack; state
-  | _ -> print_endline "Not implemented"; state
+  | Ast.St_assign (_, _) -> print_endline "Assign statement"; state
+  | Ast.St_module (_) -> print_endline "Module statement"; state
 
 let rec interpret state statements =
   match statements with
