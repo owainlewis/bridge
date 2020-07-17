@@ -1,4 +1,0 @@
-let foo = dup pop swap run "FOO" print
-;
-
-foo

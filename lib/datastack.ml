@@ -8,7 +8,7 @@ let clear s = s.c <- []
 
 let copy s = { c = s.c }
 
-let push x s = s.c <- x :: s.c
+let push s x = s.c <- x :: s.c
 
 let pop s =
   match s.c with

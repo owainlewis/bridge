@@ -1,0 +1,5 @@
+module hello
+
+let main =
+  "HELLO, WORLD!" print
+;
