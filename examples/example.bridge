@@ -1,5 +1,7 @@
-module hello
+module example;
 
 let main =
   "HELLO, WORLD!" print
 ;
+
+main

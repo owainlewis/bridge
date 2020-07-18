@@ -13,13 +13,23 @@ let repl = fun _ ->
       let program = Core.parse_string(input) in
       try
         let _ = Interpreter.interpret state program in ()
-      with (Interpreter.Unbound msg) ->
+      with
+      | Interpreter.State msg ->
+        report_error msg
+      | Interpreter.Unbound msg ->
         report_error msg
   done
 
 let run_file f =
+  let state = Interpreter.mk_state() in
   let program = Core.parse_file f in
-  print_endline (Ast.to_string program)
+  try
+    let _ = Interpreter.interpret state program in ()
+  with
+  | Interpreter.State msg ->
+    report_error msg
+  | Interpreter.Unbound msg ->
+    report_error msg
 
 let _ = match Array.length Sys.argv with
   | 1 -> repl ()

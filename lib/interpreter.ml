@@ -38,9 +38,10 @@ let debug state =
 
 (* Prints the first element on the stack [] -> ()) *)
 let print state =
+  let _ = debug state in
   match (Datastack.pop state.stack) with
   | Some(expr) -> print_endline (Ast.expr_to_string expr); state
-  | None -> state
+  | None -> raise (State "Empty stack")
 
 let dup state =
   match (Datastack.pop state.stack) with
@@ -85,7 +86,7 @@ let interpret_one state = function
        | None -> raise (Unbound ("Word `" ^ id ^ "` is not defined")))
   | Ast.St_expr e        -> Datastack.push state.stack e; (state, [])
   | Ast.St_assign (k, v) -> set_word state k v; (state, [])
-  | Ast.St_module (_)    -> print_endline "Module statement"; (state, [])
+  | Ast.St_module (_)    -> (state, [])
 
 let rec interpret state statements =
   match statements with
