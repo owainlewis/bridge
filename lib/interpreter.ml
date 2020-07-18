@@ -1,4 +1,12 @@
+(* This exception is raised when a user calls a word that is unbound.
+ * A word is said to be `unbound` if there is no definition in the
+ * internal or user defined dictionary.
+*)
 exception Unbound of string
+(* This exception is raised when an invalid state is reached.
+ * For example, a case where a user calls a word on a stack that does not
+ * have the correct number of elements (An argument error)
+*)
 exception State of string
 
 type state = {
@@ -11,6 +19,16 @@ let mk_state () =
     stack = Datastack.create();
     dictionary = Hashtbl.create 1024
   }
+
+let push s e =
+  Datastack.push s.stack e
+
+let push_many s es =
+  List.iter (push s) es
+
+let set_word s k v = Hashtbl.add s.dictionary k v
+
+let get_word s k = Hashtbl.find_opt s.dictionary k
 
 let debug state =
   let elements = Datastack.map Ast.expr_to_string state.stack in
@@ -27,22 +45,25 @@ let print state =
 let dup state =
   match (Datastack.pop state.stack) with
   | Some e ->
-    Datastack.push state.stack e;
-    Datastack.push state.stack e;
+    push_many state [e; e];
     state
   | None -> state
 
 let swap state =
   match (Datastack.pop2 state.stack) with
   | Some((e1,e2)) ->
-    Datastack.push state.stack e1;
-    Datastack.push state.stack e2;
+    push_many state [e1; e2];
     state
   | None -> state
 
 (**
  * Interpret a single expression which will potentially modify
  * the state record.
+ *
+ * The return type of this function is a new state and potentially a list of expressions to be
+ * evaluated. Expressions are returned by, for example, a user defined word
+ *
+ * E.g. let dup2 = dup dup; => interpret_one dup2 => (state, [dup, dup])
  *
  * The following example will cause an integer value to be pushed
  * into the runtime stack defined in the state record:
@@ -52,21 +73,24 @@ let swap state =
 let interpret_one state = function
   | Ast.St_expr (Ast.Expr_id id) ->
     (match id with
-     | "debug" -> debug state
-     | "print" -> print state
-     | "dup"   -> dup state
-     | "swap"  -> swap state
+     | "debug" -> (debug state, [])
+     | "print" -> (print state, [])
+     | "dup"   -> (dup state, [])
+     | "swap"  -> (swap state, [])
      | _       ->
        (* Is this a user defined word? *)
-       match (Hashtbl.find_opt state.dictionary id) with
+       match (get_word state id) with
        (* TODO solve for recursive modifications *)
-       | Some(_) -> state
+       | Some(exprs) -> (state, exprs)
        | None -> raise (Unbound ("Word `" ^ id ^ "` is not defined")))
-  | Ast.St_expr e        -> Datastack.push state.stack e; state
-  | Ast.St_assign (k, v) -> Hashtbl.add state.dictionary k v; state
-  | Ast.St_module (_)    -> print_endline "Module statement"; state
+  | Ast.St_expr e        -> Datastack.push state.stack e; (state, [])
+  | Ast.St_assign (k, v) -> set_word state k v; (state, [])
+  | Ast.St_module (_)    -> print_endline "Module statement"; (state, [])
 
 let rec interpret state statements =
   match statements with
-  | x::xs -> let new_state = interpret_one state x in interpret new_state xs
+  | x::xs ->
+    let (new_state, exprs) = interpret_one state x in
+    let statements = List.map (fun x -> Ast.St_expr x) exprs in
+    interpret new_state (statements @ xs)
   | [] -> state
