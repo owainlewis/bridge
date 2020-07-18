@@ -9,6 +9,8 @@ exception Unbound of string
 *)
 exception State of string
 
+exception Type_error of string
+
 type state = {
   stack: Ast.expr Datastack.t;
   dictionary: (string, Ast.expr list) Hashtbl.t
@@ -42,20 +44,29 @@ let print state =
   match (Datastack.pop state.stack) with
   | Some(expr) -> print_endline (Ast.expr_to_string expr); state
   | None -> raise (State "Empty stack")
-
-let dup state =
+and dup state =
   match (Datastack.pop state.stack) with
   | Some e ->
     push_many state [e; e];
     state
   | None -> state
-
-let swap state =
+and swap state =
   match (Datastack.pop2 state.stack) with
   | Some((e1,e2)) ->
     push_many state [e1; e2];
     state
   | None -> state
+and binop state f =
+  match (Datastack.pop2 state.stack) with
+  | Some((e1,e2)) ->
+    push state (f e1 e2);
+    state
+  | None -> state
+and plus x y =
+  match (x,y) with
+  | (Ast.Expr_int a, Ast.Expr_int b) -> Ast.Expr_int (a + b)
+  | (Ast.Expr_float a, Ast.Expr_float b) -> Ast.Expr_float (a +. b)
+  | _ -> raise (Type_error "Invalid types for `+` operation")
 
 (**
  * Interpret a single expression which will potentially modify
@@ -78,6 +89,7 @@ let interpret_one state = function
      | "print" -> (print state, [])
      | "dup"   -> (dup state, [])
      | "swap"  -> (swap state, [])
+     | "+"     -> (binop state plus, [])
      | _       ->
        (* Is this a user defined word? *)
        match (get_word state id) with

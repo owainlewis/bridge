@@ -1,5 +1,27 @@
 # Bridge
 
+Bridge is a stack based functional programming language inspired by Joy.
+
+It makes heavy use of combinators to perform programming operations.
+
+## Example Program
+
+```
+module example (
+    main
+);
+
+import qualified prelude as P;
+
+let main =
+  "HELLO" "WORLD" concat println
+;
+
+main
+```
+
+## Getting Started
+
 Start a REPL session with
 
 ```sh

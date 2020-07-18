@@ -7,5 +7,5 @@ run: build
 repl: build
 	@dune utop
 
-run-example: build
- 	@_build/default/bin/bridge.exe examples/example.bridge
+example: build
+	@_build/default/bin/bridge.exe examples/example.bridge
