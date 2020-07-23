@@ -38,7 +38,7 @@ let debug state =
   print_endline("[" ^ element_string ^ "]");
   state
 
-(* Prints the first element on the stack [] -> ()) *)
+(* Primary operations that manipulate a stack or perform some kind of IO *)
 let print state =
   let _ = debug state in
   match (Datastack.pop state.stack) with
@@ -67,6 +67,23 @@ and plus x y =
   | (Ast.Expr_int a, Ast.Expr_int b) -> Ast.Expr_int (a + b)
   | (Ast.Expr_float a, Ast.Expr_float b) -> Ast.Expr_float (a +. b)
   | _ -> raise (Type_error "Invalid types for `+` operation")
+
+(* A primary operation containing a name, stack modifier, doc string, signature and arity bound *)
+type primary_op = {
+  name: string;
+  op: state -> state;
+  doc: string;
+  signature: string;
+  arity: int
+}
+
+let mk_op name f doc signature arity = {name = name; op = f; doc = doc; signature = signature; arity = arity }
+
+let op_dup =
+  mk_op "dup" dup "Duplicate the top element on the stack." "A dup == A A" 1
+and op_swap =
+  mk_op "swap" swap "Swap two elements on the stack." "A B swap == B A" 2
+
 
 (**
  * Interpret a single expression which will potentially modify
