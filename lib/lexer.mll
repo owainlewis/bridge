@@ -19,6 +19,8 @@ rule token = parse
 | "["      { LEFT_BRACKET      }
 | "]"      { RIGHT_BRACKET     }
 | "="      { EQUALS            }
+| "true"   { TRUE              }
+| "false"  { FALSE             }
 | "let"    { LET               }
 | "module" { MODULE            }
 
@@ -28,7 +30,7 @@ rule token = parse
 | ['0'-'9']+ '.' ['0'-'9']* as f
     { FLOAT (float_of_string f) }
 
-| ['A'-'Z''a'-'z''0'-'9''_''+''*']['A'-'Z''a'-'z''0'-'9''-''_']* as id
+| ['A'-'Z''a'-'z''0'-'9']['A'-'Z''a'-'z''0'-'9''-''_']* as id
     { IDENTIFIER(id) }
 
 | '"' [^ '"']* "\""

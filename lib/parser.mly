@@ -9,6 +9,8 @@
 %token SEMICOLON
 %token LEFT_BRACKET RIGHT_BRACKET
 %token EQUALS
+%token TRUE
+%token FALSE
 %token MODULE
 %token LET
 %token EOF
@@ -43,6 +45,10 @@ exprs:
 ;
 
 expr:
+| TRUE
+    { Expr_bool true }
+| FALSE
+    { Expr_bool false }
 | i = INT
     { Expr_int i }
 | f = FLOAT

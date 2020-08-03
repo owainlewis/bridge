@@ -10,6 +10,8 @@ type token =
   | INT of int
   | FLOAT of float
   | STRING of string
+  | TRUE
+  | FALSE
   | IDENTIFIER of string
   (* Keywords *)
   | LET
@@ -28,6 +30,7 @@ and expr =
   | Expr_int of int
   | Expr_float of float
   | Expr_string of string
+  | Expr_bool of bool
   | Expr_id of string
   | Expr_list of expr list
 
@@ -35,6 +38,7 @@ let rec expr_to_string = function
   | Expr_int i -> string_of_int i
   | Expr_float f -> string_of_float f
   | Expr_string s -> sprintf "'%s'" s
+  | Expr_bool b -> if b then "true" else "false"
   | Expr_id id -> id
   | Expr_list vs ->
     let inner_forms =

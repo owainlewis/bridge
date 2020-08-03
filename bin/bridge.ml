@@ -18,6 +18,8 @@ let repl = fun _ ->
         report_error msg
       | Interpreter.Unbound msg ->
         report_error msg
+      | Interpreter.Type_error msg ->
+        report_error msg
   done
 
 let run_file f =

@@ -32,16 +32,26 @@ let set_word s k v = Hashtbl.add s.dictionary k v
 
 let get_word s k = Hashtbl.find_opt s.dictionary k
 
+let expr_list_to_string l =
+  let elements = List.map Ast.expr_to_string l in
+  let element_string = String.concat ", " (List.rev elements) in
+  "[" ^ element_string ^ "]"
+
+let print_user_dict s =
+  Hashtbl.iter (fun k v -> print_endline (k ^ " = " ^ expr_list_to_string v)) s.dictionary
+
 let debug state =
   let elements = Datastack.map Ast.expr_to_string state.stack in
   let element_string = String.concat ", " (List.rev elements) in
   print_endline("[" ^ element_string ^ "]");
+  print_endline "Dictionary..";
+  print_user_dict state;
   state
 
 (* Primary operations that manipulate a stack or perform some kind of IO *)
 let print state =
   let _ = debug state in
-  match (Datastack.pop state.stack) with
+  match (Datastack.peek state.stack) with
   | Some(expr) -> print_endline (Ast.expr_to_string expr); state
   | None -> raise (State "Empty stack")
 and dup state =
@@ -67,22 +77,31 @@ and plus x y =
   | (Ast.Expr_int a, Ast.Expr_int b) -> Ast.Expr_int (a + b)
   | (Ast.Expr_float a, Ast.Expr_float b) -> Ast.Expr_float (a +. b)
   | _ -> raise (Type_error "Invalid types for `+` operation")
+and minus x y =
+  match (x,y) with
+  | (Ast.Expr_int a, Ast.Expr_int b) -> Ast.Expr_int (a - b)
+  | (Ast.Expr_float a, Ast.Expr_float b) -> Ast.Expr_float (a -. b)
+  | _ -> raise (Type_error "Invalid types for `-` operation")
+and multiply x y =
+  match (x,y) with
+  | (Ast.Expr_int a, Ast.Expr_int b) -> Ast.Expr_int (a * b)
+  | (Ast.Expr_float a, Ast.Expr_float b) -> Ast.Expr_float (a *. b)
+  | _ -> raise (Type_error "Invalid types for `*` operation")
 
 (* A primary operation containing a name, stack modifier, doc string, signature and arity bound *)
 type primary_op = {
   name: string;
   op: state -> state;
-  doc: string;
   signature: string;
   arity: int
 }
 
-let mk_op name f doc signature arity = {name = name; op = f; doc = doc; signature = signature; arity = arity }
+let mk_op name f signature arity = {name = name; op = f; signature = signature; arity = arity }
 
 let op_dup =
-  mk_op "dup" dup "Duplicate the top element on the stack." "A dup == A A" 1
+  mk_op "dup" dup "[X] | dup => [X X]" 1
 and op_swap =
-  mk_op "swap" swap "Swap two elements on the stack." "A B swap == B A" 2
+  mk_op "swap" swap "[A B] | swap => [B A]" 2
 
 
 (**
@@ -102,12 +121,14 @@ and op_swap =
 let interpret_one state = function
   | Ast.St_expr (Ast.Expr_id id) ->
     (match id with
-     | "debug" -> (debug state, [])
-     | "print" -> (print state, [])
-     | "dup"   -> (dup state, [])
-     | "swap"  -> (swap state, [])
-     | "+"     -> (binop state plus, [])
-     | _       ->
+     | "debug"    -> (debug state, [])
+     | "print"    -> (print state, [])
+     | "dup"      -> (dup state, [])
+     | "swap"     -> (swap state, [])
+     | "plus"     -> (binop state plus, [])
+     | "minus"    -> (binop state minus, [])
+     | "multiply" -> (binop state multiply, [])
+     | _          ->
        (* Is this a user defined word? *)
        match (get_word state id) with
        (* TODO solve for recursive modifications *)
