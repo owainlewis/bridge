@@ -9,5 +9,5 @@ license: ""
 homepage: ""
 bug-reports: ""
 dev-repo: ""
-depends: [ "ocaml" "ocamlfind" "menhir" ]
+depends: [ "ocaml" "ocamlfind" "dune" "menhir" ]
 build: ["dune" "build" "-p" name "-j" jobs]
