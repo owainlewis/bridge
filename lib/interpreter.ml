@@ -96,7 +96,12 @@ type primary_op = {
   arity: int
 }
 
-let mk_op name f signature arity = {name = name; op = f; signature = signature; arity = arity }
+let mk_op name f signature arity = {
+  name = name; 
+  op = f; 
+  signature = signature; 
+  arity = arity 
+}
 
 let op_dup =
   mk_op "dup" dup "[X] | dup => [X X]" 1

@@ -9,7 +9,7 @@ It makes heavy use of combinators to perform programming operations.
 
 ```sh
 apt install -y opam
-opam install dune menhir
+opam install dune menhir utop
 ```
 
 ## Example Program

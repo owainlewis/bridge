@@ -1,0 +1,1 @@
+(test (name test) (libraries bridge_lib oUnit))

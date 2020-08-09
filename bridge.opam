@@ -1,13 +1,13 @@
 opam-version: "2.0"
 name: "bridge"
 version: "0.1"
-synopsis: "One-line description"
-description: ""
-maintainer: "Name <email>"
-authors: "Name <email>"
+synopsis: "A compiler"
+description: "A stack based functional programming language"
+maintainer: "Owain Lewis owain@owainlewis.com"
+authors: "Owain Lewis owain@owainlewis.com"
 license: ""
-homepage: ""
-bug-reports: ""
-dev-repo: ""
+homepage: "https://github.com/owainlewis/bridge"
+bug-reports: "https://github.com/owainlewis/bridge"
+dev-repo: "https://github.com/owainlewis/bridge"
 depends: [ "ocaml" "ocamlfind" "dune" "menhir" ]
-build: ["dune" "build" "-p" name "-j" jobs]
+build: ["dune" "build"]

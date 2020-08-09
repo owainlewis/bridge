@@ -30,7 +30,7 @@ rule token = parse
 | ['0'-'9']+ '.' ['0'-'9']* as f
     { FLOAT (float_of_string f) }
 
-| ['A'-'Z''a'-'z''0'-'9']['A'-'Z''a'-'z''0'-'9''-''_']* as id
+| ['A'-'Z''a'-'z']['A'-'Z''a'-'z''_']* as id
     { IDENTIFIER(id) }
 
 | '"' [^ '"']* "\""

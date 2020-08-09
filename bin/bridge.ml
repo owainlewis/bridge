@@ -8,7 +8,8 @@ let repl = fun _ ->
   while true do
     print_string "> ";
     let input = read_line () in
-    if input = ":exit" then exit 0
+    if input      = ":exit" then exit 0
+    else if input = ":words" then print_endline "Words"
     else
       let program = Core.parse_string(input) in
       try
