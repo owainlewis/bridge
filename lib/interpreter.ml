@@ -11,9 +11,11 @@ exception State of string
 
 exception Type_error of string
 
+(** ******************************* *)
+
 type state = {
   stack: Ast.expr Datastack.t;
-  dictionary: (string, Ast.expr list) Hashtbl.t
+  dictionary: (string, Ast.expr list) Hashtbl.t;
 }
 
 let mk_state () =
@@ -22,15 +24,20 @@ let mk_state () =
     dictionary = Hashtbl.create 1024
   }
 
+type 'a outcome = Valid of 'a | Invalid of 'a * string
+
+(** ******************************* *)
+
 let push s e =
   Datastack.push s.stack e
 
 let push_many s es =
   List.iter (push s) es
 
-let set_word s k v = Hashtbl.add s.dictionary k v
-
-let get_word s k = Hashtbl.find_opt s.dictionary k
+let set_word s k v =
+  Hashtbl.add s.dictionary k v
+and get_word s k =
+  Hashtbl.find_opt s.dictionary k
 
 let expr_list_to_string l =
   let elements = List.map Ast.expr_to_string l in
@@ -47,6 +54,30 @@ let debug state =
   print_endline "Dictionary..";
   print_user_dict state;
   state
+
+(** ******************************* *)
+
+let eff_dup state =
+  match (Datastack.pop state.stack) with
+  | Some e ->
+    push_many state [e; e];
+    Valid state
+  | None -> Valid state
+
+let apply_statement state statement =
+  match statement with
+  | Ast.St_expr (Ast.Expr_id _) ->
+    eff_dup state
+  | Ast.St_expr e        -> Datastack.push state.stack e; Valid state
+  | _ -> Invalid(state, "")
+
+let rec run state statements =
+  match statements with
+  | x::xs ->
+    (match (apply_statement state x) with
+     | Valid s -> run s xs
+     | Invalid(s, m) -> (s, m))
+  | [] -> (state, "")
 
 (* Primary operations that manipulate a stack or perform some kind of IO *)
 let print state =
@@ -97,11 +128,20 @@ type primary_op = {
 }
 
 let mk_op name f signature arity = {
-  name = name; 
-  op = f; 
-  signature = signature; 
-  arity = arity 
+  name = name;
+  op = f;
+  signature = signature;
+  arity = arity
 }
+
+(*
+DUP ( x[1] -- x[1] x[1] )
+DROP ( x -- )
+SWAP ( x[2] x[1] -- x[1] x[2] )
+ROT ( x[3] x[2] x[1] -- x[2] x[1] x[3] )
+OVER ( x[2] x[1] -- x[2] x[1] x[2] )
+PLUS ( x[1] x[1] -- x[1] )
+*)
 
 let op_dup =
   mk_op "dup" dup "[X] | dup => [X X]" 1

@@ -1,20 +1,14 @@
 EXCLUDE_QUERY_DIR
-B /home/owain/.opam/default/lib/bytes
-B /home/owain/.opam/default/lib/menhirLib
-B /home/owain/.opam/default/lib/oUnit
-B /home/owain/.opam/default/lib/ounit2
-B /home/owain/.opam/default/lib/ounit2/advanced
-B /home/owain/.opam/default/lib/stdlib-shims
-B /usr/lib/ocaml
+B /Users/owainlewis/.opam/system/lib/bytes
+B /Users/owainlewis/.opam/system/lib/menhirLib
+B /Users/owainlewis/.opam/system/lib/oUnit
+B /usr/local/lib/ocaml
 B ../_build/default/lib/.bridge_lib.objs/byte
 B ../_build/default/test/.test.eobjs/byte
-S /home/owain/.opam/default/lib/bytes
-S /home/owain/.opam/default/lib/menhirLib
-S /home/owain/.opam/default/lib/oUnit
-S /home/owain/.opam/default/lib/ounit2
-S /home/owain/.opam/default/lib/ounit2/advanced
-S /home/owain/.opam/default/lib/stdlib-shims
-S /usr/lib/ocaml
+S /Users/owainlewis/.opam/system/lib/bytes
+S /Users/owainlewis/.opam/system/lib/menhirLib
+S /Users/owainlewis/.opam/system/lib/oUnit
+S /usr/local/lib/ocaml
 S ../lib
 S .
 FLG -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs

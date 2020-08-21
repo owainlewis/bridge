@@ -38,4 +38,3 @@ let _ = match Array.length Sys.argv with
   | 1 -> repl ()
   | 2 -> run_file(Sys.argv.(1))
   | _ -> print_endline "Usage: bridge [script]";
-
