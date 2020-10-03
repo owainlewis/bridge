@@ -81,7 +81,6 @@ let rec run state statements =
 
 (* Primary operations that manipulate a stack or perform some kind of IO *)
 let print state =
-  let _ = debug state in
   match (Datastack.peek state.stack) with
   | Some(expr) -> print_endline (Ast.expr_to_string expr); state
   | None -> raise (State "Empty stack")
@@ -165,7 +164,7 @@ and op_swap =
 *)
 let interpret_one state = function
   | Ast.St_expr (Ast.Expr_id id) ->
-    (match id with
+     (match id with
      | "debug"    -> (debug state, [])
      | "print"    -> (print state, [])
      | "dup"      -> (dup state, [])
