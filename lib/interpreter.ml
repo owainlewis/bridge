@@ -1,17 +1,15 @@
 (* This exception is raised when a user calls a word that is unbound.
  * A word is said to be `unbound` if there is no definition in the
  * internal or user defined dictionary.
-*)
+ *)
 exception Unbound of string
 (* This exception is raised when an invalid state is reached.
  * For example, a case where a user calls a word on a stack that does not
  * have the correct number of elements (An argument error)
-*)
+ *)
 exception State of string
 
 exception Type_error of string
-
-(** ******************************* *)
 
 type state = {
   stack: Ast.expr Datastack.t;
@@ -25,8 +23,6 @@ let mk_state () =
   }
 
 type 'a outcome = Valid of 'a | Invalid of 'a * string
-
-(** ******************************* *)
 
 let push s e =
   Datastack.push s.stack e
@@ -54,8 +50,6 @@ let debug state =
   print_endline "Dictionary..";
   print_user_dict state;
   state
-
-(** ******************************* *)
 
 let eff_dup state =
   match (Datastack.pop state.stack) with
@@ -133,20 +127,10 @@ let mk_op name f signature arity = {
   arity = arity
 }
 
-(*
-DUP ( x[1] -- x[1] x[1] )
-DROP ( x -- )
-SWAP ( x[2] x[1] -- x[1] x[2] )
-ROT ( x[3] x[2] x[1] -- x[2] x[1] x[3] )
-OVER ( x[2] x[1] -- x[2] x[1] x[2] )
-PLUS ( x[1] x[1] -- x[1] )
-*)
-
 let op_dup =
   mk_op "dup" dup "[X] | dup => [X X]" 1
 and op_swap =
   mk_op "swap" swap "[A B] | swap => [B A]" 2
-
 
 (**
  * Interpret a single expression which will potentially modify
