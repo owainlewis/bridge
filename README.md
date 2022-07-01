@@ -1,11 +1,8 @@
 # Bridge
 
-Bridge is a stack based functional programming language inspired by Joy.
-
-It makes heavy use of combinators to perform programming operations.
+Bridge is a stack based experimental functional programming language inspired by Joy. It makes heavy use of combinators to perform programming operations.
 
 ### Setup
-
 
 ```sh
 apt install -y opam
